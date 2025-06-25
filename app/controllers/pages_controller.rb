@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
   def home
-    render json: { message: "ようこそ DictionaryNest API!" }
+    render json: { message: "Hello DictionaryNest API!" }
   end
 end
