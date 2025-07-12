@@ -10,7 +10,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       render json: {
         status: { code: 200, message: 'Signed up successfully.' },
         data: resource
-      }
+      }, status: :ok
     else
       render json: {
         status: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}" }
