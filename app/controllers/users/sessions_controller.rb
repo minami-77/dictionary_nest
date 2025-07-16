@@ -2,10 +2,12 @@
 
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
-  # ログイン処理
+  # Log in
   def create
+    # set variable user with params[:user][:email]
     user = User.find_by(email: params[:user][:email])
 
+    # check password
     if user && user.valid_password?(params[:user][:password])
       # Deviseのログイン処理
       sign_in(user)
