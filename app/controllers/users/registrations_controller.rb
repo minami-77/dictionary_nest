@@ -4,6 +4,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
   private
 
+  # override original respond_with method (in create method)
+
     def respond_with(current_user, _opts = {})
       if resource.persisted?
         render json: {
