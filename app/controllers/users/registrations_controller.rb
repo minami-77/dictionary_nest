@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include RackSessionsFix
   respond_to :json
+
   private
 
   # override original respond_with method (in create method)
