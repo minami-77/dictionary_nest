@@ -45,7 +45,7 @@ group :development do
   # gem "spring"
 end
 
-
+# Added gems
 gem "devise", "~> 4.9"
 gem 'ostruct'
 gem 'devise-jwt'

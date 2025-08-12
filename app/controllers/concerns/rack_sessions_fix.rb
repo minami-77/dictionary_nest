@@ -1,3 +1,4 @@
+# To avoid error caused by rack of sessions
 module RackSessionsFix
   extend ActiveSupport::Concern
   class FakeRackSession < Hash

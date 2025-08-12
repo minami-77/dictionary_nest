@@ -6,6 +6,7 @@ class Users::SessionsController < Devise::SessionsController
 
   private
 
+  # override original respond_with method (in create method)
   def respond_with(current_user, _opts = {})
     render json: {
       status: {
@@ -15,6 +16,7 @@ class Users::SessionsController < Devise::SessionsController
     }, status: :ok
   end
 
+  # override original respond_on_destroy method
   def respond_to_on_destroy
     if request.headers['Authorization'].present?
       jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, Rails.application.credentials.devise_jwt_secret_key!).first
