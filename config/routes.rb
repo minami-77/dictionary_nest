@@ -1,17 +1,29 @@
 Rails.application.routes.draw do
-  devise_for :users,
-
-  # To customize controllers
-  controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations'
-  }
 
   # Home page
   root to: 'pages#home'
 
-  namespace :api, defaults: { format: :json } do
+  # API Group
+    namespace :api, defaults: { format: :json } do
     namespace :v1 do
+      # Devise API
+      devise_for :users,
+
+        # Customize paths
+        path: '',
+        path_names: {
+          sign_in: 'login',
+          sign_out: 'logout',
+          registration: 'signup'
+        },
+
+        # Customize controllers
+        controllers: {
+          sessions: 'users/sessions',
+          registrations: 'users/registrations'
+        }
+
+      # Other APIs
       resources :pages, only: [:index]
       resources :words, only: [:index]
       get "users/me", to: "users#me"
