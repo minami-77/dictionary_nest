@@ -4,9 +4,11 @@ Rails.application.routes.draw do
   root to: 'pages#home'
 
   # API Group
+  # Put every　paths under api/v1
     namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      # Devise API
+
+      # Devise(API)
       devise_for :users,
 
         # Customize paths
@@ -19,14 +21,16 @@ Rails.application.routes.draw do
 
         # Customize controllers
         controllers: {
-          sessions: 'users/sessions',
-          registrations: 'users/registrations'
+          sessions: 'api/v1/sessions',
+          registrations: 'api/v1/registrations'
         }
 
       # Other APIs
       resources :pages, only: [:index]
       resources :words, only: [:index]
+      # Endpoint to get current user's ID
       get "users/me", to: "users#me"
+
     end
   end
 end
