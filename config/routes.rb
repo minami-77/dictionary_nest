@@ -30,10 +30,7 @@ Rails.application.routes.draw do
       resources :words, only: [:index]
 
       # Endpoint to get current user's ID
-      # devise_scopeでDeviseのスコープを明示
-      devise_scope :user do
-        get "users/me", to: "users#me"
-      end
+      get "users/me", to: "users#me"
 
     end
   end
