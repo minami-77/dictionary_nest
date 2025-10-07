@@ -18,6 +18,7 @@ Devise.setup do |config|
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
+  # Changed to application controller...!
   config.parent_controller = 'ApplicationController'
 
   # ==> Mailer Configuration
