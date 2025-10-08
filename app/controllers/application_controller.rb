@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
   end
 
 # alias to use shorter method names in controllers
-  alias_method :authenticate_user!, :authenticate_api_v1_user!
-  alias_method :current_user, :current_api_v1_user
+  # alias_method :authenticate_user!, :authenticate_api_v1_user!
+  # alias_method :current_user, :current_api_v1_user
 
 end
