@@ -1,27 +1,41 @@
 # frozen_string_literal: true
 
+# override original method
+
 class Api::V1::RegistrationsController < Devise::RegistrationsController
   include RackSessionsFix
   respond_to :json
 
   private
 
-  # override original respond_with method (in create method)
+  # def create
+  #   ...
+  #   resource (= instance of User) is saved to the DB
+  #   ex: User.new(sign_up_params) & .save
 
+    # current_api_v1_user = current_user with namespace /api/v1
     def respond_with(current_api_v1_user, _opts = {})
+      # if resource is in the DB,
       if resource.persisted?
+        # Pass this response BODY to frontend as json format
         render json: {
           status: {code: 200, message: 'Signed up successfully.'},
+          # JSON data of User instance with designated attributes in user_serializer.rb
           data: UserSerializer.new(current_api_v1_user).serializable_hash[:data][:attributes]
         }
+        # JWT token will be given automatically to the response HEADER.
+
+      # if resource is not in the DB,
       else
+        # Pass this response to frontend
         render json: {
           status: {message: "User couldn't be created successfully. #{current_api_v1_user.errors.full_messages.to_sentence}"}
         }, status: :unprocessable_entity
       end
+
     end
 
-# strong params
+    # strong params
     def sign_up_params
       params.require(:user).permit(:email, :name, :password, :password_confirmation)
     end
@@ -29,6 +43,10 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
     def account_update_params
       params.require(:user).permit(:email, :name, :password, :password_confirmation, :current_password)
     end
+
+  #end(def create)
+
+end
 
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
@@ -88,4 +106,3 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
-end
