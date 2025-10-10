@@ -4,16 +4,41 @@ class Api::V1::SessionsController < Devise::SessionsController
   include RackSessionsFix
   respond_to :json
 
-  private
 
+  def create
+    # 二重ネスト対策
+    if params[:session].present? && params[:session][:user].present?
+      params[:user] = params[:session][:user]
+    end
+
+    Rails.logger.info "ログイン試行: #{params[:user][:email]}"
+
+    super do |user|
+      if user.nil?
+        Rails.logger.info "該当ユーザーが存在しません"
+      elsif !user.valid_password?(password)
+        Rails.logger.info "→ パスワードが違います"
+      else
+        Rails.logger.info "→ ログイン成功: #{user.email}"
+      end
+    end
+  end
+
+  private
   # override original respond_with method (in create method)
   def respond_with(current_api_v1_user, _opts = {})
-    render json: {
-      status: {
-        code: 200, message: 'Logged in successfully.',
-        data: { user: UserSerializer.new(current_api_v1_user).serializable_hash[:data][:attributes] }
-      }
-    }, status: :ok
+    if resource.present?
+        render json: {
+          status: {
+            code: 200, message: 'Logged in successfully.',
+            data: { user: UserSerializer.new(current_api_v1_user).serializable_hash[:data][:attributes] }
+          }
+        }, status: :ok
+    else
+      render json: {
+        status: {message: "Log in failed. #{current_api_v1_user.errors.full_messages.to_sentence}"}
+        }, status: :unauthorized
+    end
   end
 
   # override original respond_on_destroy method
@@ -36,6 +61,7 @@ class Api::V1::SessionsController < Devise::SessionsController
     end
   end
 
+end
 
 
   # before_action :configure_sign_in_params, only: [:create]
@@ -61,4 +87,3 @@ class Api::V1::SessionsController < Devise::SessionsController
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
-end

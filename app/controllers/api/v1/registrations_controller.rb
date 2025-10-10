@@ -6,6 +6,13 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
   include RackSessionsFix
   respond_to :json
 
+
+  def create
+    Rails.logger.info "Sign in start"
+    Rails.logger.info "Params: #{params.to_unsafe_h}"
+    super
+  end
+
   private
 
   # def create
