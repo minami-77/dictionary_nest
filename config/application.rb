@@ -29,13 +29,19 @@ module DictionaryNest
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    # Fake rack session
-    config.middleware.insert_before Warden::Manager, Rack::Builder.new {
-      use ->(env) {
-        env['rack.session'] ||= {}
-        [200, {}, []]
-      }
-    }
-
+    config.middleware.insert_before Warden::Manager, FakeSessionMiddleware
   end
+
+  # FakeSessionMiddlewareを定義して、Wardenの前に挿入
+  class FakeSessionMiddleware
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      env['rack.session'] ||= {}
+      @app.call(env)
+    end
+  end
+
 end
