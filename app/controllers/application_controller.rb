@@ -1,6 +1,11 @@
 class ApplicationController < ActionController::API
 # To use Devise's helper method
   include Devise::Controllers::Helpers
+# Include controllers> concern> rack_sessions_fix.rb
+  include RackSessionsFix
+  Rails.logger.info "✅ RackSessionsFix included in SessionsController"
+
+
 
 # To allow name parameter
   before_action :configure_permitted_parameters, if: :devise_controller?

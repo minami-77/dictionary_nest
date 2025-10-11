@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::SessionsController < Devise::SessionsController
+  # Include controllers> concern> rack_sessions_fix.rb
   include RackSessionsFix
   respond_to :json
 
