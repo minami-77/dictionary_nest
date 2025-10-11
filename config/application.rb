@@ -28,20 +28,5 @@ module DictionaryNest
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-
-    config.middleware.insert_before Warden::Manager, FakeSessionMiddleware
   end
-
-  # FakeSessionMiddlewareを定義して、Wardenの前に挿入
-  class FakeSessionMiddleware
-    def initialize(app)
-      @app = app
-    end
-
-    def call(env)
-      env['rack.session'] ||= {}
-      @app.call(env)
-    end
-  end
-
 end
