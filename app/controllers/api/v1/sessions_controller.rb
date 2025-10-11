@@ -11,15 +11,22 @@ class Api::V1::SessionsController < Devise::SessionsController
     Rails.logger.info "ログイン試行: email=#{email}"
 
     user = User.find_by(email: email)
+
     if user.nil?
       Rails.logger.info "→ 該当ユーザーが存在しません"
+      render json: { status: { message: "User not found" } }, status: :unauthorized
+      return
     elsif !user.valid_password?(password)
       Rails.logger.info "→ パスワードが違います"
-    else
-      Rails.logger.info "→ ログイン成功！"
+      render json: { status: { message: "Invalid password" } }, status: :unauthorized
+      return
     end
 
-    super
+    Rails.logger.info "→ ログイン成功！"
+
+    # ⭐ ここが重要: sign_inを呼んでからrespond_withを呼ぶ
+    sign_in(user)
+    respond_with(user, _opts = {})
   end
 
   private
