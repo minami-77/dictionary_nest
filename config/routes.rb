@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # namespace :api do
+  #   get 'v1/words'
+  # end
 
   # Home page
   root to: 'pages#home'
@@ -28,6 +31,7 @@ Rails.application.routes.draw do
       # Other APIs
       resources :pages, only: [:index]
       resources :words, only: [:index]
+      # get "words/index", to: "words#index"
 
       # Endpoint to get current user's ID
       get "users/me", to: "users#me"

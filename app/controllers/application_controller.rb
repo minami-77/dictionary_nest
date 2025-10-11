@@ -5,8 +5,6 @@ class ApplicationController < ActionController::API
   include RackSessionsFix
   Rails.logger.info "✅ RackSessionsFix included in SessionsController"
 
-
-
 # To allow name parameter
   before_action :configure_permitted_parameters, if: :devise_controller?
   protected
