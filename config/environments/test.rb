@@ -5,6 +5,11 @@ require "active_support/core_ext/integer/time"
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs. Don't rely on the data there!
 
+# API Mode changes the order of the middleware stack, and this can cause problems for Devise::Test::IntegrationHelpers.
+# The solution is simply to reorder the middlewares by adding the following to test.rb:
+Rails.application.config.middleware.insert_before Warden::Manager, ActionDispatch::Cookies
+Rails.application.config.middleware.insert_before Warden::Manager, ActionDispatch::Session::CookieStore
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
