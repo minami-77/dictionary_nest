@@ -32,7 +32,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   private
   # override original respond_with method (in create method)
   def respond_with(current_api_v1_user, _opts = {})
-    if resource.present?
+    if current_api_v1_user.present?
         render json: {
           status: {
             code: 200, message: 'Logged in successfully.',
