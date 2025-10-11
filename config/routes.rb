@@ -30,7 +30,7 @@ Rails.application.routes.draw do
 
       # Other APIs
       resources :pages, only: [:index]
-      resources :words, only: [:index]
+      resources :words, only: [:index, :search]
       # get "words/index", to: "words#index"
 
       # Endpoint to get current user's ID

@@ -50,3 +50,4 @@ gem "devise", "~> 4.9"
 gem 'ostruct'
 gem 'devise-jwt'
 gem 'jsonapi-serializer'
+gem 'dotenv', groups: [:development, :test]
