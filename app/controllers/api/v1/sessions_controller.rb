@@ -4,24 +4,21 @@ class Api::V1::SessionsController < Devise::SessionsController
   include RackSessionsFix
   respond_to :json
 
-
   def create
-    # 二重ネスト対策
-    if params[:session].present? && params[:session][:user].present?
-      params[:user] = params[:session][:user]
+    email = params[:user][:email]
+    password = params[:user][:password]
+    Rails.logger.info "ログイン試行: email=#{email}"
+
+    user = User.find_by(email: email)
+    if user.nil?
+      Rails.logger.info "→ 該当ユーザーが存在しません"
+    elsif !user.valid_password?(password)
+      Rails.logger.info "→ パスワードが違います"
+    else
+      Rails.logger.info "→ ログイン成功！"
     end
 
-    Rails.logger.info "ログイン試行: #{params[:user][:email]}"
-
-    super do |user|
-      if user.nil?
-        Rails.logger.info "該当ユーザーが存在しません"
-      elsif !user.valid_password?(password)
-        Rails.logger.info "→ パスワードが違います"
-      else
-        Rails.logger.info "→ ログイン成功: #{user.email}"
-      end
-    end
+    super
   end
 
   private
