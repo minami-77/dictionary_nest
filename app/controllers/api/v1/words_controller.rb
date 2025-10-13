@@ -8,19 +8,28 @@ class Api::V1::WordsController < ApplicationController
     }
   end
 
-  def create()
-    render json:{word_data: params[:word_data]
-    }
-    @word = Word.new(params[:word_data])
-    @word.spelling = params[:word_data][:word]
-    @word.pronunciation = params[:word_data][:phonetic]
-    @word.language = "en"
-    # @word.user_id = current_user.id
+  def create
+    # receive word data from frontend
+    # expect to receive a hash with keys: word, phonetic, meanings
+    word_data = params[:word_data][:searchedResults][0]
+    @word = Word.new(
+      spelling: word_data[:word],
+      pronunciation: word_data[:phonetic],
+      language: "en"
+      )
 
     if @word.save
-      render json: {status: 'SUCCESS', message: 'Saved the word', data: @word_data}, status: :ok
+      render json: {
+        status: 'SUCCESS',
+        message: 'Saved the word',
+        data: @word
+      }, status: :ok
     else
-      render json: {status: 'ERROR', message: 'Did not save the word', data: @word_data.errors}, status: :unprocessable_entity
+      render json: {
+        status: 'ERROR',
+        message: 'Did not save the word',
+        data: @word.errors
+      }, status: :unprocessable_entity
     end
   end
 
