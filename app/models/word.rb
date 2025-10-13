@@ -1,3 +1,3 @@
 class Word < ApplicationRecord
-  has_many :meanings, dependent: :destroy
+  has_many :part_of_speeches, dependent: :destroy
 end
