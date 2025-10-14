@@ -10,39 +10,44 @@ class Api::V1::WordsController < ApplicationController
 
   def create
     # receive word data from frontend
-    # expect to receive a hash with keys: word, phonetic, meanings
-    word_data = params[:word_data][:searchedResults][0]
+    word_data = params[:word_data][:searchedResults]
+
     @word = Word.new(
-      spelling: word_data[:word],
-      pronunciation: word_data[:phonetic],
+      spelling: word_data[0][:word],
+      pronunciation: word_data[0][:phonetic],
       language: "en"
       )
 
-    # save parts of speech and definitions
-    whole_word_data = params[:word_data]
-    whole_word_data.each do |word_data|
-      word_data[:meanings].each do |meaning|
-        meaning = @word.part_of_speeches.create(
-          part_of_speech: meanings[:partOfSpeech]
+    # save part of speeches and definitions
+    word_data.each do |data|
+      data[:meanings].each do |meaning_data|
+        part_of_speech = @word.part_of_speeches.new(
+          part_of_speech: meaning_data[:partOfSpeech]
         )
-        category[:definitions].each do |definition|
-          part_of_speech.definitions.create(
-            description: definition[:definition],
-            example: definition[:example],
-            synonyms: definition[:synonyms].join(", ") ,
-            antonyms: definition[:antonyms].join(", ")
+        category[:definitions].each do |def_data|
+          part_of_speech.definitions.new(
+            description: def_data[:definition],
+            example: def_data[:example]||"",
+            synonyms: def_data[:synonyms]||[],
+            antonyms: def_data[:antonyms]||[]
           )
         end
       end
     end
 
+    # Connect user to the word
 
+
+
+
+
+    # Display result
     if @word.save && @part_of_speech.save && @definition.save
       render json: {
         status: 'SUCCESS',
         message: 'Saved the word',
         word: @word,
-        part_of_speech: @word.part_of_speech,
+        part_of_speech: @word.part_of_speeches,
         definition: @word.part_of_speech.definition
       }, status: :ok
     else
