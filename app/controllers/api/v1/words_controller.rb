@@ -36,7 +36,7 @@ class Api::V1::WordsController < ApplicationController
           )
           meaning_data[:definitions].each do |def_data|
             part_of_speech.definitions.create(
-              description: def_data[:definition],
+              definition: def_data[:definition],
               example: def_data[:example]||"",
               synonyms: def_data[:synonyms]||[],
               antonyms: def_data[:antonyms]||[]
@@ -53,25 +53,40 @@ class Api::V1::WordsController < ApplicationController
 
     # Connect user to the word
     user = current_api_v1_user
-    user_word = user.user_words.find_by(word_id: @word.id)
+    user_word = user.user_words.find_by(word_id: @word)
 
-    if user_word.persisted?
+    if user_word
       render json: {
         status: 'INFO',
         message: 'Word already saved',
         }, status: :ok
     else
-      user_word = user.user_words.create(word_id: @word.id)
-      unless user_word.persisted?
+      user_word = user.user_words.create(word_id: @word)
+      if user_word.persisted?
+        render json: {
+          status: 'SUCCESS',
+          message: 'Saved the word',
+          word: @word,
+          part_of_speech: @word.part_of_speeches,
+          definition: @word.part_of_speeches.map { |pos| pos.definitions }
+        }, status: :ok
+      else
         render json: {
           status: 'ERROR',
           message: 'Did not connect the word to the user',
-          user: user.errors
-        }, status: :unprocessable_entity and return
+          errors: user_word.errors.full_messages
+        }, status: :unprocessable_entity
       end
     end
 
+  rescue => e
+  render json: {
+    status: 'ERROR',
+    message: '予期しないエラーが発生しました',
+    error: e.message
+  }, status: :internal_server_error
   end
+
 end
 
     # # Display result
