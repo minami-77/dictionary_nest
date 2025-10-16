@@ -53,7 +53,7 @@ class Api::V1::WordsController < ApplicationController
 
     # Connect user to the word
     user = current_api_v1_user
-    user_word = user.user_words.find_by(word_id: @word)
+    user_word = user.user_words.find_by(word: @word)
 
     if user_word
       render json: {
@@ -61,7 +61,7 @@ class Api::V1::WordsController < ApplicationController
         message: 'Word already saved',
         }, status: :ok
     else
-      user_word = user.user_words.create(word_id: @word)
+      user_word = user.user_words.create(word: @word)
 
       Rails.logger.info "UserWord persisted?: #{user_word.persisted?}"
       Rails.logger.info "UserWord errors: #{user_word.errors.full_messages}"
