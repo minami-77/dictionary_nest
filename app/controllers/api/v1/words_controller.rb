@@ -62,13 +62,14 @@ class Api::V1::WordsController < ApplicationController
         }, status: :ok
     else
       user_word = user.user_words.create(word_id: @word)
+
+      Rails.logger.info "UserWord persisted?: #{user_word.persisted?}"
+      Rails.logger.info "UserWord errors: #{user_word.errors.full_messages}"
+
       if user_word.persisted?
         render json: {
           status: 'SUCCESS',
           message: 'Saved the word',
-          word: @word,
-          part_of_speech: @word.part_of_speeches,
-          definition: @word.part_of_speeches.map { |pos| pos.definitions }
         }, status: :ok
       else
         render json: {
