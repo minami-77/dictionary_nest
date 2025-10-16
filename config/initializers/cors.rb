@@ -8,7 +8,7 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # React(Vite)
-    origins "http://localhost:5173","https://api.dictionaryapi.dev"
+    origins "http://localhost:5173"
 
     resource "*",
       headers: :any,
