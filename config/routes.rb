@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   # API Group
   # Put every　paths under api/v1
-    namespace :api, defaults: { format: :json } do
+  namespace :api, defaults: { format: :json } do
     namespace :v1 do
 
       # Devise(API)
@@ -31,10 +31,12 @@ Rails.application.routes.draw do
       # Other APIs
       resources :pages, only: [:index]
       resources :words, only: [:index, :create]
+      resources :user_words, only: [:index, :show, :update, :destroy]
 
       # Endpoint to get current user's ID
       get "users/me", to: "users#me"
 
     end
   end
+
 end

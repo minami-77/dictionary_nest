@@ -44,16 +44,11 @@ class Api::V1::WordsController < ApplicationController
           end
         end
       end
-
-    else
-      render json: {
-        message: 'Part of speeches already saved',
-      } and return
     end
 
     # Connect user to the word
     user = current_api_v1_user
-    user_word = user.user_words.find_by(word: @word)
+    user_word = user.user_words.find_or_create_by(word: @word)
 
     if user_word
       render json: {
@@ -62,7 +57,6 @@ class Api::V1::WordsController < ApplicationController
         }, status: :ok
     else
       user_word = user.user_words.create(word: @word)
-
       Rails.logger.info "UserWord persisted?: #{user_word.persisted?}"
       Rails.logger.info "UserWord errors: #{user_word.errors.full_messages}"
 
@@ -80,6 +74,7 @@ class Api::V1::WordsController < ApplicationController
       end
     end
 
+# Standard error handling
   rescue => e
   render json: {
     status: 'ERROR',
