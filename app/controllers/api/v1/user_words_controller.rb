@@ -3,7 +3,10 @@ class Api::V1::UserWordsController < ApplicationController
     user = current_api_v1_user
     user_words = user.user_words.includes(:word)
 
-    render json: ()
+    render json: {
+      status: 'SUCCESS',
+      data: user_words.as_json(include: :word)
+    }
 
   end
 
