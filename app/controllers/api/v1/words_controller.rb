@@ -59,6 +59,8 @@ class Api::V1::WordsController < ApplicationController
       render json: {
         status: 'SUCCESS',
         message: 'Saved the word',
+        word: @word,
+        note: user_word.note
         }, status: :created
     else
     # update note if already exists
