@@ -11,7 +11,7 @@ class Api::V1::WordsController < ApplicationController
   def create
     # receive word data from frontend
     word_data = params[:word_data][:searchedResults]
-    note = params[:word_data][:note]
+    note = params[:note]
 
     # 1. create word if not saved yet
     @word = Word.find_by(
@@ -49,7 +49,7 @@ class Api::V1::WordsController < ApplicationController
 
     # 3. create UserWord to link word to the current user
     user = current_api_v1_user
-    user_word = user.user_words.find_or_initialized_by(word: @word)
+    user_word = user.user_words.find_or_initialize_by(word: @word)
 
     # save note and respond accordingly
     if user_word.new_record?
