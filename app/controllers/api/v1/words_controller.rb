@@ -11,8 +11,9 @@ class Api::V1::WordsController < ApplicationController
   def create
     # receive word data from frontend
     word_data = params[:word_data][:searchedResults]
+    note = params[:word_data][:note]
 
-    # save the word if not saved yet
+    # 1. create word if not saved yet
     @word = Word.find_by(
       spelling: word_data[0][:word])
     if @word
@@ -27,7 +28,7 @@ class Api::V1::WordsController < ApplicationController
       )
     end
 
-    # save part of speeches and definitions if not saved yet
+    # 2. create part of speeches and definitions if not saved yet
     if @word.part_of_speeches.empty?
       word_data.each do |data|
         data[:meanings].each do |meaning_data|
@@ -46,32 +47,27 @@ class Api::V1::WordsController < ApplicationController
       end
     end
 
-    # Connect user to the word
+    # 3. create UserWord to link word to the current user
     user = current_api_v1_user
-    user_word = user.user_words.find_or_create_by(word: @word)
+    user_word = user.user_words.find_or_initialized_by(word: @word)
 
-    if user_word
+    # save note and respond accordingly
+    if user_word.new_record?
+      user_word.note = note
+      user_word.save
+
       render json: {
-        status: 'INFO',
-        message: 'Word already saved',
-        }, status: :ok
+        status: 'SUCCESS',
+        message: 'Saved the word',
+        }, status: :created
     else
-      user_word = user.user_words.create(word: @word)
-      Rails.logger.info "UserWord persisted?: #{user_word.persisted?}"
-      Rails.logger.info "UserWord errors: #{user_word.errors.full_messages}"
+    # update note if already exists
+      user_word.update(note: note)
 
-      if user_word.persisted?
-        render json: {
-          status: 'SUCCESS',
-          message: 'Saved the word',
-        }, status: :ok
-      else
-        render json: {
-          status: 'ERROR',
-          message: 'Did not connect the word to the user',
-          errors: user_word.errors.full_messages
-        }, status: :unprocessable_entity
-      end
+      render json: {
+        status: 'SUCCESS',
+        message: 'Word already saved. note Updated.',
+      }, status: :ok
     end
 
 # Standard error handling

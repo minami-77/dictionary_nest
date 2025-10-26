@@ -9,10 +9,10 @@ class Api::V1::UserWordsController < ApplicationController
       status: 'SUCCESS',
       data: user_words.as_json(include: :word)
     }
-
   end
 
   def show
+
   end
 
   def update
