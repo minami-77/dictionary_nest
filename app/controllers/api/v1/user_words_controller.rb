@@ -11,9 +11,9 @@ class Api::V1::UserWordsController < ApplicationController
         {
           id: uw.id,
           note: note,
-          name: uw.name,
-          word: uw.spelling,
-          pronunciation: uw.pronunciation,
+          name: uw.word.name,
+          word: uw.word.spelling,
+          pronunciation: uw.word.pronunciation,
           part_of_speeches:
             uw.part_of_speech.map do |pos|
               {
