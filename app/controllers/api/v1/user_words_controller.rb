@@ -3,16 +3,40 @@ class Api::V1::UserWordsController < ApplicationController
 
   def index
     user = current_api_v1_user
-    user_words = user.user_words.includes(:word)
+    user_words = user.user_words.includes(word: {part_of_speech: :definition})
 
     render json: {
       status: 'SUCCESS',
-      data: user_words.as_json(include: :word)
+      data: user_words.map do |uw|
+        {
+          id: uw.id,
+          note: note,
+          name: uw.name,
+          word: uw.spelling,
+          pronunciation: uw.pronunciation,
+          part_of_speeches:
+            uw.part_of_speech.map do |pos|
+              {
+                part_of_speech: pos.part_of_speech
+              }
+              pos.map do |definition|
+                {
+                  definition: definition.definition,
+                  example: definition.example,
+                  synonyms: [definition.synonyms.join(",")],
+                  antonyms: [definition.antonyms.join(",")]
+                }
+              end
+          end
+        }
+
+      end
+
     }
   end
 
-  def show
 
+  def show
   end
 
   def update
