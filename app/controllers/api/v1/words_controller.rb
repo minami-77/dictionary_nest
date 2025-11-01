@@ -15,6 +15,7 @@ class Api::V1::WordsController < ApplicationController
 
     # 1. create word if not saved yet
     @word = Word.find_by(
+    # name of DB columns : name of JSON key (API)
       spelling: word_data[0][:word])
     if @word
       render json: {
@@ -22,6 +23,7 @@ class Api::V1::WordsController < ApplicationController
       } and return
     else
       @word = Word.create(
+      # name of DB columns : name of JSON key (API)
         spelling: word_data[0][:word],
         pronunciation: word_data[0][:phonetic],
         language: "en"
@@ -33,6 +35,7 @@ class Api::V1::WordsController < ApplicationController
       word_data.each do |data|
         data[:meanings].each do |meaning_data|
           part_of_speech = @word.part_of_speeches.create(
+          # name of DB columns : name of JSON key (API)
             part_of_speech: meaning_data[:partOfSpeech]
           )
           meaning_data[:definitions].each do |def_data|
@@ -54,6 +57,7 @@ class Api::V1::WordsController < ApplicationController
     # save note and respond accordingly
     if user_word.new_record?
       user_word.note = note
+      user_word.status = 0
       user_word.save
 
       render json: {

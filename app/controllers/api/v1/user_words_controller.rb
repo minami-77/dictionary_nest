@@ -23,6 +23,9 @@ class Api::V1::UserWordsController < ApplicationController
       data: user_words.map do |uw|
         {
           note: uw.note,
+          status: uw.status,
+          created_at:uw.created_at,
+          updated_at:uw.updated_at,
           spelling: uw.word.spelling,
           pronunciation: uw.word.pronunciation,
           part_of_speech: uw.word.part_of_speeches.first&.part_of_speech,
@@ -44,14 +47,13 @@ class Api::V1::UserWordsController < ApplicationController
           #     end
           # end
         }
-
       end
-
     }
   end
 
 
   def show
+
   end
 
   def update
