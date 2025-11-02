@@ -31,21 +31,6 @@ class Api::V1::UserWordsController < ApplicationController
           part_of_speech: uw.word.part_of_speeches.first&.part_of_speech,
           definition: uw.word.part_of_speeches&.first&.definitions&.first&.definition,
           example: uw.word.part_of_speeches&.first&.definitions&.first&.example
-
-          # part_of_speeches:
-          #   uw.part_of_speeches.map do |pos|
-          #     {
-          #       part_of_speech: pos.part_of_speech
-          #     }
-          #     pos.map do |definition|
-          #       {
-          #         definition: definition.definition,
-          #         example: definition.example,
-          #         synonyms: [definition.synonyms.join(",")],
-          #         antonyms: [definition.antonyms.join(",")]
-          #       }
-          #     end
-          # end
         }
       end
     }
@@ -53,8 +38,44 @@ class Api::V1::UserWordsController < ApplicationController
 
 
   def show
+    user = current_api_v1_user
+    # includes(parent:{children::grandchildren})
+    user_words = user.user_words.includes(word: {part_of_speeches: :definitions})
 
+    word = Word.find_by(spelling: params[:id])
+    user_word = UserWord.find_by(word:word)
+
+  Rails.logger.debug "===== Show Debug ====="
+  Rails.logger.debug "Requested word: #{params[:id]}"
+  Rails.logger.debug "Word found: #{word.inspect}"
+
+    render json: {
+      status: 'SUCCESS',
+      data:
+        {
+          note: user_word.note,
+          status: user_word.status,
+          created_at:user_word.created_at,
+          updated_at:user_word.updated_at,
+          spelling: user_word.word.spelling,
+          pronunciation: user_word.word.pronunciation,
+          part_of_speeches:user_word.word.part_of_speeches.map do |pos|
+              {
+                part_of_speech: pos.part_of_speech,
+                definitions: pos.definitions.map do |defn|
+                  {
+                    definition: defn.definition,
+                    example: defn.example,
+                    synonyms: [defn.synonyms.join(",")]||[],
+                    antonyms: [defn.antonyms.join(",")]||[],
+                  }
+                end
+              }
+            end
+        }
+    }
   end
+
 
   def update
   end
