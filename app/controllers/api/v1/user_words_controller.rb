@@ -66,8 +66,8 @@ class Api::V1::UserWordsController < ApplicationController
                   {
                     definition: defn.definition,
                     example: defn.example,
-                    synonyms: [defn.synonyms.join(",")]||[],
-                    antonyms: [defn.antonyms.join(",")]||[],
+                    synonyms: defn.synonyms||[],
+                    antonyms: defn.antonyms||[],
                   }
                 end
               }
